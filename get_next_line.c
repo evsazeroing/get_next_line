@@ -1,10 +1,22 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: kjacks <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/01/10 20:04:18 by kjacks            #+#    #+#             */
+/*   Updated: 2019/01/10 20:15:08 by kjacks           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "get_next_line.h"
 
-static char	*get_str(char **jlst_data)
+static char		*get_str(char **jlst_data)
 {
-	char			*res;
-	char			*tmp;
-	size_t			i;
+	char	*res;
+	char	*tmp;
+	size_t	i;
 
 	i = 0;
 	if (!(tmp = ft_strdup(*jlst_data)))
@@ -29,7 +41,7 @@ static char	*get_str(char **jlst_data)
 	return (res);
 }
 
-static char	*strjoin_free(char **jlst_data, char *buf)
+static char		*concat_free(char **jlst_data, char *buf)
 {
 	char	*res;
 	size_t	i;
@@ -43,7 +55,7 @@ static char	*strjoin_free(char **jlst_data, char *buf)
 	return (res);
 }
 
-static t_file	*find_t(t_file **slst, int fd)
+static t_file	*search_fd(t_file **slst, int fd)
 {
 	t_file	*tmp;
 
@@ -64,22 +76,22 @@ static t_file	*find_t(t_file **slst, int fd)
 	return (tmp);
 }
 
-int		get_next_line(const int fd, char **line)
+int				get_next_line(const int fd, char **line)
 {
 	static t_file	*slst;
-	t_file		*jlst;
-	int		r;
-	char		buf[BUFF_SIZE + 1];
+	t_file			*jlst;
+	int				r;
+	char			buf[BUFF_SIZE + 1];
 
 	if (BUFF_SIZE < 1 || fd < 0 || !line || (read(fd, buf, 0) < 0)
-		|| !(jlst = find_t(&slst, fd)))
+			|| !(jlst = search_fd(&slst, fd)))
 		return (-1);
 	r = 0;
 	while (!(ft_strchr(jlst->data, '\n'))
-		&& (r = read(fd, buf, BUFF_SIZE)) > 0)
+			&& (r = read(fd, buf, BUFF_SIZE)) > 0)
 	{
 		buf[r] = '\0';
-		if (!(jlst->data = strjoin_free((char **)&jlst->data, buf)))
+		if (!(jlst->data = concat_free((char **)&jlst->data, buf)))
 			return (-1);
 		if (ft_strchr(buf, '\n'))
 			break ;
